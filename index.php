@@ -179,7 +179,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </footer>
 
     <script>
-        function toggleHelpMenu(event) {
+    function toggleHelpMenu(event) {
     // Prevent the click from immediately bubbling up to the window
     event.stopPropagation();
     
@@ -225,6 +225,25 @@ window.addEventListener('click', function() {
         const modal = document.getElementById('loginModal');
         if (event.target == modal) closeLogin();
     }
+
+    function togglePassword() {
+    const passwordInput = document.getElementById('password');
+    const toggleIcon = document.getElementById('toggleIcon');
+    
+    // Safety check since the element is dynamic
+    if (!passwordInput || !toggleIcon) return;
+
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    }
+}
+
     </script>
 </body>
 </html>
