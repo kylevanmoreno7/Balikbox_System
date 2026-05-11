@@ -1,0 +1,75 @@
+CREATE DATABASE balikbox_db;
+USE balikbox_db;
+
+-- Users table
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    user_type ENUM('Customer', 'Admin') NOT NULL,
+    last_login DATETIME NULL,
+    is_active BOOLEAN DEFAULT TRUE
+);
+
+-- Forwarders table
+CREATE TABLE forwarders (
+    forwarder_id INT AUTO_INCREMENT PRIMARY KEY,
+    company_name VARCHAR(100) NOT NULL,
+    contact_number VARCHAR(20),
+    country_origin VARCHAR(50) DEFAULT 'Global',
+    status ENUM('Active', 'Inactive') DEFAULT 'Active'
+);
+
+-- Shipments table
+CREATE TABLE shipments (
+    shipment_id INT AUTO_INCREMENT PRIMARY KEY,
+    tracking_no VARCHAR(20) UNIQUE NOT NULL,
+    sender_id INT,
+    sender_full_name VARCHAR(100),
+    sender_email VARCHAR(100),
+    sender_country VARCHAR(50),
+    sender_phone VARCHAR(25),
+    receiver_name VARCHAR(100),
+    receiver_email VARCHAR(100),
+    receiver_phone VARCHAR(25),
+    forwarder_id INT,
+    destination TEXT,
+    box_size VARCHAR(50),
+    price DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    currency VARCHAR(10) DEFAULT 'PHP',
+    status ENUM('Pending', 'Paid', 'Picked Up', 'In Transit', 'Delivered') DEFAULT 'Pending',
+    admin_status ENUM('pending_approval', 'approved', 'rejected', 'in_transit', 'ready_for_pickup', 'delivered') DEFAULT 'pending_approval',
+    payment_date DATETIME NULL,
+    arrival_date DATE NULL,
+    admin_notes TEXT NULL,
+    approved_at DATETIME NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES users(user_id),
+    FOREIGN KEY (forwarder_id) REFERENCES forwarders(forwarder_id)
+);
+
+-- Notifications table
+CREATE TABLE notifications (
+    notification_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    type ENUM('shipment', 'payment', 'approval', 'delivery', 'system') DEFAULT 'shipment',
+    is_read BOOLEAN DEFAULT FALSE,
+    link VARCHAR(255) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+-- Insert forwarders
+INSERT INTO forwarders (company_name, contact_number, country_origin, status) VALUES 
+('J&T Express', '02-123-4567', 'Philippines', 'Active'),
+('Flash Express', '02-765-4321', 'Philippines', 'Active'),
+('DHL Express', '1800-123-4567', 'Global', 'Active'),
+('FedEx', '1800-987-6543', 'Global', 'Active');
+
+-- Insert admin account with PLAIN TEXT password (Admin@123)
+INSERT INTO users (username, full_name, email, password_hash, user_type, is_active) VALUES 
+('admin', 'System Administrator', 'admin@balikbox.com', 'Admin@123', 'Admin', 1);
