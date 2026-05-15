@@ -34,39 +34,18 @@ if (isset($_GET['tracking_no'])) {
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; }
+        /* Custom scrollbar for dark theme */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
-<body class="min-h-screen" style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1e40af 100%);">
-    
-    <nav class="bg-white/10 backdrop-blur-md shadow-lg px-6 py-4 fixed w-full top-0 z-50 border-b border-white/10">
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-4">
-                <a href="dashboard.php" class="bg-gray-500/80 hover:bg-gray-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2">
-                    <i class="fas fa-arrow-left"></i> Back
-                </a>
-                <div class="flex items-center gap-2">
-                    <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg">
-                        <i class="fas fa-box-open text-white text-xl"></i>
-                    </div>
-                    <span class="font-bold text-2xl text-white tracking-tight">BALIKBOX</span>
-                    <span class="text-xs text-blue-200 ml-2">Track Package</span>
-                </div>
-            </div>
-            <div class="flex items-center gap-4">
-                <?php include('includes/notification_bell.php'); ?>
-                <div class="flex items-center gap-3 bg-white/10 rounded-full px-4 py-2">
-                    <i class="fas fa-user-circle text-blue-200 text-lg"></i>
-                    <span class="text-sm font-medium text-white"><?php echo $_SESSION['username']; ?></span>
-                </div>
-                <a href="logout.php" class="bg-red-500/80 hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition">
-                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                </a>
-            </div>
-        </div>
-    </nav>
+<body class="min-h-screen bg-slate-900 flex text-slate-100">
 
-    <div class="container mx-auto pt-28 px-6 pb-12">
-        <div class="max-w-2xl mx-auto">
+    <?php include('sidebar.php'); ?>
+
+    <div class="flex-1 ml-72 pt-20 px-8 pb-12">
+        <div class="max-w-4xl mx-auto">
             
             <div class="text-center mb-8">
                 <div class="w-20 h-20 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl">
@@ -76,25 +55,29 @@ if (isset($_GET['tracking_no'])) {
                 <p class="text-blue-200 mt-2">Enter your tracking number to check shipment status</p>
             </div>
 
-            <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 mb-8">
+            <div class="bg-gray-900 backdrop-blur-md rounded-2xl shadow-2xl p-6 mb-8 border border-white/10">
                 <form method="GET" class="flex gap-3">
-                    <input type="text" name="tracking_no" placeholder="Enter Tracking Number (e.g., BBOX-2024-1234)" 
-                           class="flex-1 p-4 rounded-xl border-2 border-gray-200 focus:border-blue-500 outline-none text-lg"
-                           required>
-                    <button type="submit" class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 rounded-xl font-bold hover:shadow-lg transition">
+                    <div class="relative flex-1">
+                        <i class="fas fa-hashtag absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                        <input type="text" name="tracking_no" 
+                               placeholder="Enter Tracking Number (e.g., BBOX-2024-1234)" 
+                               class="w-full pl-12 p-4 rounded-xl border border-white/10 bg-slate-900/50 text-white placeholder-slate-500 focus:ring-2 focus:ring-yellow-500 outline-none text-lg transition-all"
+                               required>
+                    </div>
+                    <button type="submit" class="bg-gradient-to-r from-yellow-500 to-orange-600 text-white px-8 rounded-xl font-bold hover:shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all">
                         <i class="fas fa-truck mr-2"></i> TRACK
                     </button>
                 </form>
             </div>
 
             <?php if ($error): ?>
-                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-xl">
-                    <i class="fas fa-exclamation-circle mr-2"></i> <?php echo $error; ?>
+                <div class="bg-red-500/10 backdrop-blur-md border border-red-500/50 text-red-200 p-4 rounded-xl mb-8 flex items-center gap-3">
+                    <i class="fas fa-exclamation-circle text-xl"></i> <?php echo $error; ?>
                 </div>
             <?php endif; ?>
 
             <?php if ($shipment): ?>
-                <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
+                <div class="bg-slate-800/60 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden border border-white/10">
                     <div class="bg-gradient-to-r from-yellow-500 to-orange-500 p-6 text-white">
                         <div class="flex justify-between items-center flex-wrap gap-4">
                             <div>
@@ -102,8 +85,8 @@ if (isset($_GET['tracking_no'])) {
                                 <h2 class="text-2xl font-black font-mono"><?php echo $shipment['tracking_no']; ?></h2>
                             </div>
                             <div class="text-right">
-                                <p class="text-sm opacity-80 uppercase font-bold">Current Status</p>
-                                <span class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full font-bold text-sm inline-block">
+                                <p class="text-sm opacity-80 uppercase font-bold mb-1">Current Status</p>
+                                <span class="bg-black/20 backdrop-blur-sm px-4 py-2 rounded-full font-bold text-sm inline-block border border-white/10">
                                     <?php 
                                         $status_map = [
                                             'pending_approval' => 'Pending Approval',
@@ -120,32 +103,32 @@ if (isset($_GET['tracking_no'])) {
                         </div>
                     </div>
                     
-                    <div class="p-6 space-y-5">
-                        <div class="grid grid-cols-2 gap-5">
-                            <div>
-                                <p class="text-gray-500 text-xs font-bold uppercase">Receiver</p>
-                                <p class="font-bold text-lg"><?php echo $shipment['receiver_name']; ?></p>
+                    <div class="p-8 space-y-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="bg-white/5 p-4 rounded-xl border border-white/5">
+                                <p class="text-slate-500 text-xs font-bold uppercase mb-1">Receiver</p>
+                                <p class="font-bold text-xl text-white"><?php echo $shipment['receiver_name']; ?></p>
                             </div>
-                            <div>
-                                <p class="text-gray-500 text-xs font-bold uppercase">Forwarder</p>
-                                <p class="font-bold text-lg"><?php echo $shipment['company_name']; ?></p>
+                            <div class="bg-white/5 p-4 rounded-xl border border-white/5">
+                                <p class="text-slate-500 text-xs font-bold uppercase mb-1">Forwarder</p>
+                                <p class="font-bold text-xl text-white"><?php echo $shipment['company_name']; ?></p>
                             </div>
                         </div>
                         
-                        <div>
-                            <p class="text-gray-500 text-xs font-bold uppercase">Complete Delivery Address</p>
-                            <p class="text-gray-700 leading-relaxed mt-1"><?php echo nl2br(htmlspecialchars($shipment['destination'])); ?></p>
+                        <div class="bg-white/5 p-5 rounded-xl border border-white/5">
+                            <p class="text-slate-500 text-xs font-bold uppercase mb-2">Complete Delivery Address</p>
+                            <p class="text-slate-200 leading-relaxed"><?php echo nl2br(htmlspecialchars($shipment['destination'])); ?></p>
                         </div>
                         
-                        <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-xl flex justify-between items-center">
-                            <span class="text-gray-600 font-medium">Estimated Arrival:</span>
-                            <span class="font-bold text-blue-700 text-lg"><?php echo $shipment['arrival_date'] ?? 'Processing...'; ?></span>
+                        <div class="bg-gradient-to-r from-blue-600/20 to-indigo-600/20 p-5 rounded-xl flex justify-between items-center border border-blue-500/30">
+                            <span class="text-blue-300 font-medium">Estimated Arrival:</span>
+                            <span class="font-bold text-blue-400 text-xl"><?php echo $shipment['arrival_date'] ?? 'Processing...'; ?></span>
                         </div>
                         
-                        <div class="bg-blue-50 p-4 rounded-xl text-center">
-                            <i class="fas fa-info-circle text-blue-600 mr-2"></i>
-                            <span class="text-sm text-gray-600">For more details, visit your 
-                                <a href="my_shipments.php" class="text-blue-600 font-bold hover:underline">My Shipments</a> page.
+                        <div class="bg-slate-900/50 p-4 rounded-xl text-center border border-white/5">
+                            <i class="fas fa-info-circle text-blue-400 mr-2"></i>
+                            <span class="text-sm text-slate-400">For more details, visit your 
+                                <a href="my_shipments.php" class="text-blue-400 font-bold hover:underline">My Shipments</a> page.
                             </span>
                         </div>
                     </div>
