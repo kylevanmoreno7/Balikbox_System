@@ -5,7 +5,7 @@ include('config.php');
 $role = isset($_GET['role']) ? $_GET['role'] : 'Customer';
 
 // Pre-define error variable
-$error = null;
+$display_error = isset($_GET['error']) ? $_GET['error'] : null;
 
 // Handle Login Submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -20,7 +20,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = $stmt->get_result();
 
     if ($user = $result->fetch_assoc()) {
-        // Use password_verify for security, or simple check if using your create_admin.php logic
         if ($password == $user['password_hash'] || password_verify($password, $user['password_hash'])) {
             $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['username'] = $user['username'];
@@ -30,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         }
     }
-    $error = "Invalid credentials for $user_role.";
+    $login_error = "Invalid credentials for $user_role portal.";
 }
 ?>
 
@@ -52,14 +51,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <p class="text-gray-400 text-sm">Please enter your credentials</p>
         </div>
 
-        <?php if($error): ?>
-            <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-3 mb-4 text-xs">
-                <?php echo $error; ?>
-            </div>
-        <?php endif; ?>
+        <?php if ($display_error): ?>
+        <div class="bg-red-500/20 border border-red-500 text-red-200 p-3 rounded-lg text-xs mb-4 flex items-center gap-2">
+            <i class="fas fa-exclamation-triangle"></i>
+            <?php echo htmlspecialchars($display_error); ?>
+        </div>
+    <?php endif; ?>
 
-        <form method="POST" action="" class="space-y-4">
-            <input type="hidden" name="user_role" value="<?php echo $role; ?>">
+    <form method="POST" action="index.php" class="space-y-4"> 
+    <input type="hidden" name="login_attempt" value="1">
+    <input type="hidden" name="user_role" value="<?php echo htmlspecialchars($role); ?>">
             
             <div>
                 <label class="block text-gray-300 text-xs font-bold mb-1 uppercase">Username</label>
@@ -80,10 +81,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
             </div>
 
-            <button type="submit" class="w-full <?php echo $role == 'Admin' ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'; ?> text-white font-bold py-3 rounded-lg transition mt-2">
-                Sign In
-            </button>
-        </form>
+
+        <button type="submit" class="w-full <?php echo $role == 'Admin' ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'; ?> text-white font-bold py-3 rounded-lg transition mt-2">
+            Sign In as <?php echo $role; ?>
+        </button>
+    </form>
 
         <div class="mt-6 text-center border-t border-[#3e4a6f] pt-4">
             <p class="text-sm text-gray-300">
@@ -96,4 +98,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
 </body>
-</html>
+</html>    
