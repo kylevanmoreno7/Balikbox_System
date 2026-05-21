@@ -15,7 +15,6 @@ $user_data = $user_query->get_result()->fetch_assoc();
 $sender_name = $user_data['full_name'];
 $sender_email = $user_data['email'];
 
-// Fetch all active forwarders
 $forwarder_query = $conn->query("SELECT * FROM forwarders WHERE status='Active'");
 $all_forwarders = [];
 while($f = $forwarder_query->fetch_assoc()) {
@@ -33,52 +32,30 @@ while($f = $forwarder_query->fetch_assoc()) {
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; }
-        .card-hover { transition: all 0.3s ease; }
-        .card-hover:hover { transform: translateY(-3px); }
+        /* Custom scrollbar for dark theme */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
     </style>
 </head>
-<body class="min-h-screen" style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1e40af 100%);">
-    
-    <nav class="bg-white/10 backdrop-blur-md shadow-lg px-6 py-4 fixed w-full top-0 z-50 border-b border-white/10">
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-4">
-                <a href="dashboard.php" class="bg-gray-500/80 hover:bg-gray-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2">
-                    <i class="fas fa-arrow-left"></i> Back
-                </a>
-                <div class="flex items-center gap-2">
-                    <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg">
-                        <i class="fas fa-box-open text-white text-xl"></i>
-                    </div>
-                    <span class="font-bold text-2xl text-white tracking-tight">BALIKBOX</span>
-                    <span class="text-xs text-blue-200 ml-2">Send Shipment</span>
-                </div>
-            </div>
-            <div class="flex items-center gap-4">
-                <?php include('includes/notification_bell.php'); ?>
-                <div class="flex items-center gap-3 bg-white/10 rounded-full px-4 py-2">
-                    <i class="fas fa-user-circle text-blue-200 text-lg"></i>
-                    <span class="text-sm font-medium text-white"><?php echo $_SESSION['username']; ?></span>
-                </div>
-                <a href="logout.php" class="bg-red-500/80 hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition">
-                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                </a>
-            </div>
-        </div>
-    </nav>
+<body class="min-h-screen bg-slate-900 flex text-slate-100">
 
-    <div class="container mx-auto pt-28 px-6 pb-12">
-        <div class="max-w-5xl mx-auto">
+    <?php include('sidebar.php'); ?>
+
+    <div class="flex-1 ml-72 p-8">
+        <div class="max-w-4xl mx-auto">
             
             <div class="text-center mb-8">
                 <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl">
                     <i class="fas fa-paper-plane text-white text-3xl"></i>
                 </div>
                 <h1 class="text-3xl font-bold text-white">Send a Balikbayan Box</h1>
-                <p class="text-blue-200 mt-2">Fill out the form below to ship your box to the Philippines</p>
+                <p class="text-blue-300 mt-2">Fill out the form below to ship your box to the Philippines</p>
             </div>
 
-            <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
-                <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-5 text-white">
+            <div class="bg-slate-800/40 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden border border-white/10">
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-700 p-5 text-white">
                     <h2 class="text-xl font-bold"><i class="fas fa-shipping-fast mr-2"></i> Standard Shipping Manifest</h2>
                     <p class="text-blue-100 text-sm mt-1">Please ensure all contact details and addresses are accurate</p>
                 </div>
@@ -87,19 +64,19 @@ while($f = $forwarder_query->fetch_assoc()) {
                     <div class="grid md:grid-cols-2 gap-8">
                         
                         <div class="space-y-4">
-                            <h3 class="text-lg font-bold text-blue-700 border-b pb-2 flex items-center gap-2">
+                            <h3 class="text-lg font-bold text-blue-400 border-b border-white/10 pb-2 flex items-center gap-2">
                                 <i class="fas fa-user"></i> Sender Information
                             </h3>
                             <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Full Name</label>
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Full Name</label>
                                 <input type="text" name="sender_name" value="<?php echo htmlspecialchars($sender_name); ?>" 
-                                       class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                                       class="w-full p-3 border border-white/10 rounded-xl bg-slate-900/50 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
                             </div>
                             <div class="grid grid-cols-3 gap-3">
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Country Code</label>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Code</label>
                                     <select name="s_country_code" id="s_country_code" onchange="updatePlaceholder('s')" 
-                                            class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                                            class="w-full p-3 border border-white/10 rounded-xl bg-slate-900 text-white focus:ring-2 focus:ring-blue-500 outline-none">
                                         <option value="+63" data-pattern="^9\d{9}$" data-hint="9XX XXX XXXX">PH (+63)</option>
                                         <option value="+1" data-pattern="^\d{10}$" data-hint="XXX XXX XXXX">US (+1)</option>
                                         <option value="+44" data-pattern="^7\d{9}$" data-hint="7XXX XXXXXX">UK (+44)</option>
@@ -108,21 +85,21 @@ while($f = $forwarder_query->fetch_assoc()) {
                                     </select>
                                 </div>
                                 <div class="col-span-2">
-                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Phone Number</label>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Phone Number</label>
                                     <input type="text" name="sender_phone" id="s_phone" required 
-                                           class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none">
-                                    <p id="s_hint" class="text-[10px] text-gray-400 mt-1"></p>
+                                           class="w-full p-3 border border-white/10 rounded-xl bg-slate-900/50 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 outline-none">
+                                    <p id="s_hint" class="text-[10px] text-slate-500 mt-1"></p>
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Email Address</label>
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Email Address</label>
                                 <input type="email" name="sender_email" value="<?php echo htmlspecialchars($sender_email); ?>" required 
-                                       class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                                       class="w-full p-3 border border-white/10 rounded-xl bg-slate-900/50 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 outline-none">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Country of Origin</label>
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Country of Origin</label>
                                 <select name="s_country" id="s_country" onchange="updateSenderUI()" 
-                                        class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                                        class="w-full p-3 border border-white/10 rounded-xl bg-slate-900 text-white focus:ring-2 focus:ring-blue-500 outline-none">
                                     <option value="Philippines">Philippines</option>
                                     <option value="USA">USA</option>
                                     <option value="UK">UK</option>
@@ -132,82 +109,62 @@ while($f = $forwarder_query->fetch_assoc()) {
                             </div>
                             <div id="s_dynamic_area" class="space-y-3"></div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Street / Unit / Building</label>
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Street / Unit / Building</label>
                                 <input type="text" name="s_street" required 
-                                       class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                                       class="w-full p-3 border border-white/10 rounded-xl bg-slate-900/50 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 outline-none">
                             </div>
                         </div>
 
                         <div class="space-y-4">
-                            <h3 class="text-lg font-bold text-yellow-600 border-b pb-2 flex items-center gap-2">
+                            <h3 class="text-lg font-bold text-yellow-500 border-b border-white/10 pb-2 flex items-center gap-2">
                                 <i class="fas fa-user-friends"></i> Receiver Information
                             </h3>
                             <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Recipient Name</label>
-                                <input type="text" name="receiver_name" required 
-                                       class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-yellow-500 outline-none">
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Recipient Name</label>
+                                <input type="text" name="receiver_name" required placeholder="Enter full name"
+                                       class="w-full p-3 border border-white/10 rounded-xl bg-slate-900/50 text-white placeholder-slate-500 focus:ring-2 focus:ring-yellow-500 outline-none">
                             </div>
                             <div class="grid grid-cols-3 gap-3">
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Country Code</label>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Code</label>
                                     <select name="r_country_code" id="r_country_code" onchange="updatePlaceholder('r')" 
-                                            class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-yellow-500 outline-none">
+                                            class="w-full p-3 border border-white/10 rounded-xl bg-slate-900 text-white focus:ring-2 focus:ring-yellow-500 outline-none">
                                         <option value="+63" data-pattern="^9\d{9}$" data-hint="9XX XXX XXXX">PH (+63)</option>
                                         <option value="+1" data-pattern="^\d{10}$" data-hint="XXX XXX XXXX">US (+1)</option>
-                                        <option value="+44" data-pattern="^7\d{9}$" data-hint="7XXX XXXXXX">UK (+44)</option>
-                                        <option value="+971" data-pattern="^5\d{8}$" data-hint="5X XXX XXXX">UAE (+971)</option>
-                                        <option value="+81" data-pattern="^\d{10}$" data-hint="XX XXXX XXXX">JP (+81)</option>
-                                    </select>
+                                        </select>
                                 </div>
                                 <div class="col-span-2">
-                                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Phone Number</label>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Phone Number</label>
                                     <input type="text" name="receiver_phone" id="r_phone" required 
-                                           class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-yellow-500 outline-none">
-                                    <p id="r_hint" class="text-[10px] text-gray-400 mt-1"></p>
+                                           class="w-full p-3 border border-white/10 rounded-xl bg-slate-900/50 text-white placeholder-slate-500 focus:ring-2 focus:ring-yellow-500 outline-none">
+                                    <p id="r_hint" class="text-[10px] text-slate-500 mt-1"></p>
                                 </div>
                             </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Recipient Email (Optional)</label>
-                                <input type="email" name="receiver_email" 
-                                       class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-yellow-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Destination Country</label>
-                                <select name="r_country" id="r_country" onchange="renderAddressFields('r')" 
-                                        class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-yellow-500 outline-none">
-                                    <option value="Philippines">Philippines</option>
-                                    <option value="USA">USA</option>
-                                    <option value="UK">UK</option>
-                                    <option value="UAE">UAE</option>
-                                    <option value="Japan">Japan</option>
-                                </select>
+                             <div>
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Destination Country</label>
+                                <input type="hidden" name="r_country" id="r_country" value="Philippines">
+                                <div class="w-full p-3 border border-white/10 rounded-xl bg-slate-900/50 text-white">Philippines</div>
                             </div>
                             <div id="r_dynamic_area" class="space-y-3"></div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">House / Building Details</label>
-                                <input type="text" name="r_house_details" placeholder="e.g. House No. 123, Villa Maria Subdivision" 
-                                       class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-yellow-500 outline-none">
-                                <p class="text-[10px] text-gray-400 mt-1">House number, building name, subdivision, landmark</p>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Street / Unit / Building</label>
-                                <input type="text" name="r_street" required 
-                                       class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-yellow-500 outline-none">
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">House / Building Details</label>
+                                <input type="text" name="r_house_details" placeholder="e.g. House No. 123, Villa Maria" 
+                                       class="w-full p-3 border border-white/10 rounded-xl bg-slate-900/50 text-white placeholder-slate-500 focus:ring-2 focus:ring-yellow-500 outline-none">
                             </div>
                         </div>
                     </div>
 
-                    <div class="mt-8 p-6 bg-gray-50 rounded-xl grid md:grid-cols-3 gap-6 border">
+                    <div class="mt-8 p-6 bg-slate-900/60 rounded-xl grid md:grid-cols-3 gap-6 border border-white/5">
                         <div>
-                            <label class="text-xs font-bold text-gray-500 uppercase mb-2 block">Available Courier</label>
+                            <label class="text-xs font-bold text-slate-400 uppercase mb-2 block">Available Courier</label>
                             <select name="forwarder_id" id="forwarder_select" required 
-                                    class="w-full p-3 border rounded-xl bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                    class="w-full p-3 border border-white/10 rounded-xl bg-slate-900 text-white focus:ring-2 focus:ring-blue-500 outline-none">
                             </select>
                         </div>
                         <div>
-                            <label class="text-xs font-bold text-gray-500 uppercase mb-2 block">Box Size</label>
+                            <label class="text-xs font-bold text-slate-400 uppercase mb-2 block">Box Size</label>
                             <select name="box_size" id="box_size" onchange="updatePrice()" required 
-                                    class="w-full p-3 border rounded-xl bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                    class="w-full p-3 border border-white/10 rounded-xl bg-slate-900 text-white focus:ring-2 focus:ring-blue-500 outline-none">
                                 <option value="Small">Small (24"x18"x9")</option>
                                 <option value="Medium">Medium (23"x20"x17")</option>
                                 <option value="Large">Large (28"x18"x17")</option>
@@ -215,18 +172,18 @@ while($f = $forwarder_query->fetch_assoc()) {
                             </select>
                         </div>
                         <div>
-                            <label class="text-xs font-bold text-gray-500 uppercase mb-2 block">Estimated Total</label>
+                            <label class="text-xs font-bold text-slate-400 uppercase mb-2 block">Estimated Total</label>
                             <div class="flex items-center">
-                                <span id="currency_symbol" class="p-3 bg-gray-200 border border-r-0 rounded-l-xl font-bold text-blue-700 text-xl">₱</span>
+                                <span id="currency_symbol" class="p-3 bg-slate-700 border border-white/10 border-r-0 rounded-l-xl font-bold text-blue-400 text-xl">₱</span>
                                 <input type="text" name="price" id="price_display" readonly 
-                                       class="w-full p-3 border rounded-r-xl bg-gray-100 font-bold text-blue-700 text-xl">
+                                       class="w-full p-3 border border-white/10 rounded-r-xl bg-slate-800 text-blue-400 font-bold text-xl">
                                 <input type="hidden" name="currency" id="currency_input" value="PHP">
                             </div>
                         </div>
                     </div>
 
                     <div class="mt-8">
-                        <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl transition-all flex items-center justify-center gap-3">
+                        <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-[0_0_20px_rgba(37,99,235,0.3)] transition-all flex items-center justify-center gap-3">
                             <i class="fas fa-file-invoice"></i> CONFIRM SHIPMENT
                         </button>
                     </div>
@@ -276,9 +233,9 @@ while($f = $forwarder_query->fetch_assoc()) {
         fields.forEach(f => {
             const div = document.createElement('div');
             div.innerHTML = `
-                <label class="text-xs font-bold text-gray-500 uppercase mb-1 block">${f.label}</label>
+                <label class="text-xs font-bold text-slate-400 uppercase mb-1 block">${f.label}</label>
                 <input type="text" name="${prefix}_${f.id}" placeholder="${f.placeholder}" required 
-                       class="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-${ringColor}-500 outline-none">
+                       class="w-full p-3 border border-white/10 rounded-xl bg-slate-900/50 text-white placeholder-slate-500 focus:ring-2 focus:ring-${ringColor}-500 outline-none transition-all">
             `;
             container.appendChild(div);
         });
