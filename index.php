@@ -2,18 +2,23 @@
 session_start();
 include('config.php'); 
 
+$login_error = null;
+
+// index.php - Update this section at the top
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
     $password = $_POST['password'];
+    $user_role = $_POST['user_role']; // Add this to capture the role from the hidden field
 
-    $stmt = $conn->prepare("SELECT user_id, username, password_hash, user_type FROM users WHERE username = ?");
-    $stmt->bind_param("s", $username);
+    // Updated Query: Filter by username AND user_type
+    $stmt = $conn->prepare("SELECT user_id, username, password_hash, user_type FROM users WHERE username = ? AND user_type = ?");
+    $stmt->bind_param("ss", $username, $user_role);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($user = $result->fetch_assoc()) {
-        // Warning: This plaintext comparison is highly insecure. Secure password hashing should be implemented.
-        if ($password == $user['password_hash']) {
+        // Use password_verify for better security
+        if ($password == $user['password_hash'] || password_verify($password, $user['password_hash'])) {
             $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['user_type'] = $user['user_type'];
@@ -21,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         }
     }
-    $error = "Invalid credentials.";
+    $login_error = "Invalid credentials for $user_role portal.";
 }
 ?>
 <!DOCTYPE html>
@@ -80,9 +85,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <i id="helpArrow" class="fas fa-chevron-down text-xs opacity-70 mt-0.5 transition-transform duration-200"></i>
                 </button>
                 <div id="helpDropdown" class="absolute left-0 top-full mt-2 w-48 bg-white/10 backdrop-blur-md rounded-xl shadow-xl border border-white/10 py-2 group-hover:flex hidden flex-col z-[110]">
-                    <a href="#" class="px-5 py-2 text-white hover:bg-white/10 text-sm">FAQs</a>
-                    <a href="#" class="px-5 py-2 text-white hover:bg-white/10 text-sm">Contact Support</a>
-                    <a href="#" class="px-5 py-2 text-white hover:bg-white/10 text-sm">Shipping Guide</a>
+                    <a href="faqs.php" class="px-5 py-2 text-white hover:bg-white/10 text-sm">FAQs</a>
+                    <a href="contact.php" class="px-5 py-2 text-white hover:bg-white/10 text-sm">Contact Support</a>
+                    <a href="guide.php" class="px-5 py-2 text-white hover:bg-white/10 text-sm">Shipping Guide</a>
                 </div>
             </div>
         </div>
@@ -99,7 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
      style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1e40af 100%);">
         <div class="relative z-10 container mx-auto px-6">
             <i class="fas fa-box-open text-6xl mt-4 mb-5 shadow-lg"></i>
-            <h1 class="text-5xl font-bold mb-4 drop-shadow-lg">“Send Your Balikbayan Box with Ease”</h1>
+            <h1 class="text-5xl font-bold mb-4 drop-shadow-lg">Send Your Balikbayan Box with Ease</h1>
             <p class="text-xl pt-6 mb-6 opacity-90 drop-shadow-md">Login As:</p>
             
             <div class="flex flex-col md:flex-row gap-6 justify-center items-center">
@@ -243,6 +248,26 @@ window.addEventListener('click', function() {
         toggleIcon.classList.add('fa-eye-slash');
     }
 }
+    function openLogin(role, errorMsg = "") {
+        const modal = document.getElementById('loginModal');
+        const content = document.getElementById('loginContent');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        
+        // We pass the error message as a URL parameter to login.php
+        fetch(`login.php?role=${role}&error=${encodeURIComponent(errorMsg)}`)
+            .then(response => response.text())
+            .then(data => {
+                content.innerHTML = data;
+            });
+    }
+
+    // Auto-reopen modal if there was a PHP error after reload
+    <?php if ($login_error): ?>
+        window.onload = function() {
+            openLogin("<?php echo $_POST['user_role']; ?>", "<?php echo $login_error; ?>");
+        };
+    <?php endif; ?>
 
     </script>
 </body>
