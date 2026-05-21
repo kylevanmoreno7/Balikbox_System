@@ -62,7 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt = $conn->prepare("INSERT INTO shipments (tracking_no, sender_id, sender_full_name, sender_email, sender_country, sender_phone, receiver_name, receiver_email, receiver_phone, forwarder_id, destination, box_size, price, currency, status, admin_status) 
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending', 'pending_approval')");
 
-    $stmt->bind_param("sisssssssisssd", 
+    $stmt->bind_param("sisssssssissds", 
         $tracking_no, $sender_id, $sender_full_name, $sender_email, $sender_country, 
         $sender_phone, $receiver_name, $receiver_email, $receiver_phone, $forwarder_id, 
         $destination, $box_size, $price, $currency
